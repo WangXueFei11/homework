@@ -1,0 +1,5 @@
+print(chr(0x2a) * 20)
+print(chr(0x2a),end = '')
+print('数据科学与工程导论',end = "")
+print(chr(0x2a))
+print(chr(0x2a) * 20)
