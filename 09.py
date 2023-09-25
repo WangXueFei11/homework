@@ -1,9 +1,12 @@
-list = [1,2,3,4,5]
-for i in range(0,len(list)):
-    print(list[len(list) - i - 1],end = " ")
-print(' ')
-
-i =  len(list) - 1
-while i >= 0:
-    print(list[i],end = " ")
-    i = i - 1
+import random
+import math
+def estimate(times):
+    sum = 0
+    for i in range(times):
+        x = random.uniform(2,3)
+        y = random.uniform(0,100)
+        d = x * x + 4 * x * math.sin(x) - y
+        if d > 0:
+            sum += 1
+    print((sum * 100) / times)
+estimate(1000000)
