@@ -1,10 +1,10 @@
+def square_root_3(x):
+    c = x 
+    g = c / 2
+    i = 0
+    while abs((g * g) - c) > 0.00000000001:
+        g = (g + c / g) / 2
+        i += 1
+        print("%d:%.13f"%(i,g))
 x = int(input())
-y = int(input())
-z = int(input())
-if x > y:
-    x,y = y,x
-if x > z:
-    x,z = z,x
-if y > z:
-    y,z = z,y
-print(x,y,z)
+square_root_3(x)
