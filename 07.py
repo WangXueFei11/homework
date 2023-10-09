@@ -1,7 +1,13 @@
-c = int(input())
-g = c / 2
-i = 0
-while abs(g * g * g - c) > 0.00000000001:
-    g = (2 * g + c / (g * g)) / 3
-    i += 1
-    print("%d: %.15f" %(i,g))
+x = int(input())
+y = int(input())
+MIN = min(x,y)
+flag = 0
+i = MIN
+while i >= 1 and flag == 0:
+    if(x % i == 0) and (y % i == 0):
+        flag = 1
+    i -= 1
+if flag == 0:
+    print("1")
+else:
+    print(i + 1)
