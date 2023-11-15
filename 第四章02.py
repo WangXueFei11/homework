@@ -1,8 +1,9 @@
-from datetime import datetime
-today = datetime.now()
-Today = datetime.utcnow()
-someday = datetime(2023,10,9,15,12,1)
-print(today)
-print(Today)
-print(someday.isoweekday())
-print(today.strftime("%Y-%m-%d %H :%M :%S"))
+import time
+start_time = time.time()
+for i in range(1000000):
+    pass
+end_time = time.time()
+execution_time = end_time - start_time
+print("start_time:",start_time)
+print("end_time:",end_time)
+print("execution_time:",execution_time)
