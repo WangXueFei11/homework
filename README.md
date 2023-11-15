@@ -26,3 +26,12 @@
 9、
 
 ![屏幕截图 2023-11-15 094836](https://github.com/WangXueFei11/homework/assets/144666483/f0dc92ea-3563-49a6-823d-1eecb2e59bc8)
+
+# 第四章
+1、 
+
+![屏幕截图 2023-11-15 095811](https://github.com/WangXueFei11/homework/assets/144666483/07a8032a-d401-4d31-80c9-4fc17b376df0)
+
+2、 
+
+![屏幕截图 2023-11-15 100207](https://github.com/WangXueFei11/homework/assets/144666483/9ae86d7a-1a22-4000-8ea3-9867d55c2458)
