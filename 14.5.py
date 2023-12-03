@@ -1,31 +1,20 @@
-# -*- coding: utf-8 -*-
 import numpy as np
-import scipy.io.wavfile as wavfile
 import matplotlib.pyplot as plt
+from scipy.io import wavfile
 
-# 读取音频文件
-sample_rate, audio_data = wavfile.read('my_audio_file.wav')
+sample_rate, audio_data = wavfile.read("Dive.wav")
 
-# 选择要分析的音频片段长度
-segment_length = 4096
-num_segments = int(len(audio_data) / segment_length)
+fft_result = np.fft.fft(audio_data)
+fft_freqs = np.fft.fftfreq(len(fft_result), 1 / sample_rate)
 
-# 对每个音频片段进行FFT
-fft_results = []
-for i in range(num_segments):
-    start = i * segment_length
-    end = start + segment_length
-    segment = audio_data[start:end]
-    fft_result = np.fft.fft(segment)
-    fft_results.append(np.abs(fft_result))  # 取绝对值得到频谱幅度
-    
-# 计算频率轴
-frequencies = np.linspace(0, sample_rate / 2, num=segment_length)# 只考虑正频率范围
+magnitude_spectrum = np.abs(fft_result)
 
-# 绘制频谱图
+plt.rcParams['font.sans-serif'] = 'SimHei' 
+plt.rcParams['axes.unicode_minus'] = False  
 plt.figure(figsize=(10, 6))
-plt.plot(frequencies, np.mean(fft_results, axis=0))# 平均所有片段的频谱幅度
-plt.xlabel('Frequency (Hz)')
-plt.ylabel('Magnitude')
-plt.title('Spectrogram of Audio File')
+plt.title("频谱图")
+plt.xlabel("频率 (Hz)")
+plt.ylabel("幅度")
+plt.xlim(0, sample_rate / 2)  # 只显示正频率部分
+plt.plot(fft_freqs[:len(fft_freqs) // 2], magnitude_spectrum[:len(fft_freqs) // 2])
 plt.show()
