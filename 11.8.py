@@ -16,9 +16,9 @@ plt.scatter(X['petal length (cm)'], X['petal width (cm)'], c=labels)
 plt.scatter(kmeans.cluster_centers_[:, 0],
             kmeans.cluster_centers_[:, 1],
             s=100,
-            c='red',
+            c='green',
             label='Centroids')
-plt.xlabel('petal length (cm)')
-plt.ylabel('petal width (cm)')
+plt.xlabel('petal_length')
+plt.ylabel('petal_width')
 plt.legend()
 plt.show()
