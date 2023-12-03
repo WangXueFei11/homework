@@ -21,3 +21,7 @@
 14.3（2）：
 
 ![14 3（2）](https://github.com/WangXueFei11/homework/assets/144666483/e8f28cf9-3442-4841-a4ab-7b84c97ac34b)
+
+14.4：
+
+![14 4](https://github.com/WangXueFei11/homework/assets/144666483/a647335a-42c0-4136-a929-b31d9526b565)
