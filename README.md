@@ -6,6 +6,10 @@
 
 ![13 1（2）](https://github.com/WangXueFei11/homework/assets/144666483/c8157a98-76d5-4a88-8252-9c6a087a033f)
 
+13.3：
+
+![13 3](https://github.com/WangXueFei11/homework/assets/144666483/4abeaa5f-58d5-4b6d-bc7b-8a819f43ca0c)
+
 14.2：
 
 ![14 2](https://github.com/WangXueFei11/homework/assets/144666483/28e79b9b-fd9c-4db4-b3aa-7adfbf5ebf4b)
