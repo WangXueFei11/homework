@@ -9,3 +9,10 @@
     fulldata = pd.read_csv("../Python/pokemon.csv")
     df = fulldata[["name","type1","type2","weight_kg","hp","generation","is_legendary"]].copy()
     df.info()
+
+    
+1. 从中我们可以看出，有20个宝可梦的重量数据丢失了。
+2. 事实证明，大部分数据丢失是因为宝可梦有不同的形态。
+3. 其中一些宝可梦的"type2"栏中的副属性是不正确的，因为进化后的属性跟原本的属性不相同。
+4. 在出现这种差异的地方，只使用与系列中引入的主属性相关的信息。
+5. 在大多数情况下，这包括删除宝可梦
