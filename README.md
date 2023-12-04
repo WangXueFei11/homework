@@ -320,6 +320,7 @@
         filtered_data[i]["p_value"] = 1 - chi2.cdf(filtered_data[i]["mahala"], 1)
 
 找到所有具有异常低的p值(小于0.001)的宝可梦，并将它们添加到异常值列表中：（P < 0.001是确定数据点是否为离群值的标准。）
+
     bivar_outliers = pd.DataFrame(columns= list(filtered_data[0].columns))
     for i in range(0, len(type_list)):
         out_to_add = filtered_data[i][filtered_data[i]["p_value"] < .001]
