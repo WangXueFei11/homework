@@ -6,6 +6,53 @@
 3. 同时，我认为宝可梦的属性（如：火，草，龙，幽灵）会对重量和基础HP之间的关系产生影响。
 4. 宝可梦共有18种属性。
 5. 每一个宝可梦都有一个主要的属性，有一部分宝可梦还有一个副属性，主属性和副属性都是18种之一。
+
+需要用到的库和属性：
+
+    import seaborn as sns
+    import numpy as np
+    import pandas as pd
+    import matplotlib.pyplot as plt
+    import scipy as sp
+    import os
+    import csv
+    from scipy.stats import chi2
+    from math import floor
+    from sklearn.model_selection import train_test_split, KFold, cross_val_score, cross_validate
+    from sklearn.linear_model import LinearRegression
+    from sklearn import metrics
+    sns.set(rc={'axes.edgecolor':'gray', 
+                'axes.labelcolor': 'gray', 
+                'xtick.color': 'gray', 
+                'ytick.color': 'gray', 
+                'text.color': 'gray',
+                'figure.figsize': (20, 10), 
+                'legend.fontsize': 12, 
+                'font.size': 12, 
+                'legend.title_fontsize': 14, 
+                'axes.labelsize': 14,
+                'axes.titlesize': 24}, 
+            style='white')
+    color_dict = {"normal":"#A8AA79",
+                  "fire":"#EF812E",
+                  "water":"#6991F0",
+                  "grass":"#7AC852",
+                  "electric":"#F6D030",
+                  "ice":"#9AD7D9",
+                  "fighting":"#C12F27",
+                  "poison":"#A0429F",
+                  "ground":"#BCA23B",
+                  "flying":"#A991F0",
+                  "psychic":"#F85887",
+                  "bug":"#A7B822",
+                  "rock":"#B99F38",
+                  "ghost":"#6D5947",
+                  "dark":"#70589A",
+                  "dragon":"#6B3EE3",
+                  "steel":"#B6B8D0",
+                  "fairy":"#FF65D5"
+                 }
+
 ### 2.数据清洗
     fulldata = pd.read_csv("../Python/pokemon.csv")
     df = fulldata[["name","type1","type2","weight_kg","hp","generation","is_legendary"]].copy()
