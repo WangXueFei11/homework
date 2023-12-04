@@ -17,3 +17,10 @@
 3. 其中一些宝可梦的"type2"栏中的副属性是不正确的，因为进化后的属性跟原本的属性不相同。
 4. 在出现这种差异的地方，只使用与系列中引入的主属性相关的信息。
 5. 在大多数情况下，这包括删除宝可梦阿罗拉形态中的错误属性信息和添加缺失的体重。
+
+下面展示缺失“weight_kg”的数据框：
+
+    missing_data = df[df["weight_kg"].isna()]
+    print(missing_data)
+
+![2](https://github.com/WangXueFei11/homework/assets/144666483/401c6744-7c4b-45c3-aae0-bba4840f1ead)
