@@ -117,9 +117,76 @@
     round(df_type.sort_values(by="corr_coef", ascending=False),3)
     print(df_type)
 
+创建“df_type”，这是一个使用宝可梦属性作为索引的数据框架，并将使用这些属性的汇总数据填充。在数据框创建之后，对具有特定属性的宝可梦进行分组，并获得重量和基础HP之间的相关系数。
+
 ![6](https://github.com/WangXueFei11/homework/assets/144666483/5d0e7366-8813-47c8-a00e-032ab8b593ae)
 
-创建“df_type”，这是一个使用宝可梦属性作为索引的数据框架，并将使用这些属性的汇总数据填充。在数据框创建之后，对具有特定属性的宝可梦进行分组，并获得重量和基础HP之间的相关系数。
 
 1. 按照属性分类之后，可以看出在大部分属性的宝可梦中，重量跟基础HP有更强的正相关性；
 2. 其中只有毒系（poison,0.391）、飞行系（flying,0.378）、地面系（ground,0.359）和超能系（psychic,0.074）的相关系数小于所有属性的平均值（0.425）。
+
+
+下面统计每种属性的宝可梦的数量：
+
+    df_type = pd.DataFrame()
+    for i in range(0, len(type_list)):
+        df_type.loc[type_list[i],"type_count"] = (sum(df.loc[:,type_list[i]]))
+
+    print(df_type["type_count"].sort_values(ascending=False))
+
+通过计算列中对应属性的1的总和来计算每种特定属性的宝可梦数量。
+
+![7](https://github.com/WangXueFei11/homework/assets/144666483/cccef413-3055-451b-90b5-53c39cb62a48)
+
+
+可以看出，水系，普通系和飞行系的宝可梦最多。
+因为有的宝可梦有两种属性，所以各种类型的宝可梦的数量和要多于宝可梦的数量，多了401，即有两种属性的宝可梦的数量。
+
+    b = 0
+    for i in range(0, len(type_list)):
+        b = b + df_type.loc[type_list[i],"corr_coef"]* df_type.loc[type_list[i],"type_count"]
+
+    b = round(b/sum(df_type.loc[:,"type_count"]),3)
+    print("The weighted average correlation coefficient of all types of pokemon using weights equal to the number of pokemon with that type is "+ str(b))
+    print("This exceeds the unweighted average by " + str(round((b-a),3)))
+
+
+![8](https://github.com/WangXueFei11/homework/assets/144666483/06bde6b5-8cc1-4fbe-8333-85ac7d9461c4)
+
+可以看出，所有属性的宝可梦的加权平均相关系数（权重为该属性宝可梦的数量）为0.483，比未加权高了0.058。
+
+
+求取所有属性的宝可梦的重量的平均值和标准差：
+
+    df_type = pd.DataFrame()
+    filtered_data = []
+    for i in range(0, len(type_list)):
+        filtered_data.append(df[df[type_list[i]] == 1])
+        df_type.loc[type_list[i], "weight_mean"] = (filtered_data[i])["weight_kg"].mean()
+        df_type.loc[type_list[i], "weight_stdev"] = (filtered_data[i])["weight_kg"].std()
+    print(round(df_type[["weight_mean", "weight_stdev"]].sort_values(by="weight_mean", ascending=False),2))
+
+创建1个包含18个数据框的列表，每个数据框只包含具有一种特定属性的宝可梦。然后，分别求得所有属性的宝可梦的重量的平均值和标准差，并将这些信息记录到“df_type”中。
+
+![9](https://github.com/WangXueFei11/homework/assets/144666483/eef15d3a-d9cc-41b1-a9fd-2de3cda35a53)
+
+一般来说，宝可梦的重量跟它的属性有关，龙系、钢系和地面系的宝可梦是最重的。
+
+    g = sns.barplot(y="weight_mean", data=df_type.sort_values(by="weight_mean",ascending=False), x= df_type.sort_values(by="weight_mean",ascending=False).index, palette=color_dict)
+    g.set_title("Average Pokemon Weight by Type")
+    plt.show()
+
+![柱状图](https://github.com/WangXueFei11/homework/assets/144666483/1a0ce104-3f59-4536-a48f-bcaea6b8d735)
+柱状图展示了各种属性的宝可梦的平均重量。
+
+    g = sns.boxplot(data = df, x = "type1", y = "weight_kg", palette = color_dict, showfliers=False)
+    g.set_title("Pokemon Weights by Primary Type")
+    plt.show()
+
+![箱形图](https://github.com/WangXueFei11/homework/assets/144666483/e841414b-171e-492b-9480-0b6a82827a02)
+
+这些箱形图只涉及宝可梦的主属性，因此值与上面的条形图有些不同。
+
+    g = sns.lmplot(x="corr_coef",y="type_count",data=df_type, legend=False, height=10, aspect=2, scatter_kws={"s":10*df_type["type_count"], "color":list(color_dict.values())}, line_kws= 
+    {"linewidth":8,"color":"purple"})
+    g.fig.suptitle("Correlation Coefficients vs. Number of Pokemon of that Type", fontsize=40, y=1.05)
