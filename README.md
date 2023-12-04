@@ -360,6 +360,8 @@
 3. 将异常值去除以训练模型，但该模型的预测也将应用于包括异常值在内的数据集。
 4. 系数和截距分别存储在名为“cv_coefs”和“cv_intercepts”的变量中。
 
+模型：
+
     X = df_no_out[["weight_kg","normal","fire","water","grass","electric","ice","fighting","poison","ground","flying","psychic","bug","rock","ghost","dark","dragon","steel","fairy"]]
     y = df_no_out["hp"]
     kf = KFold(n_splits=10, shuffle=True, random_state=135)
