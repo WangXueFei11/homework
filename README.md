@@ -66,3 +66,32 @@
 ![4](https://github.com/WangXueFei11/homework/assets/144666483/f3d8097c-bbd5-406a-8fc0-3204bb3447e3)
 
 可以看到，weight_kg有801，跟宝可梦数量相同。
+
+### 3.数据分析
+创造18个新列，用于存放18种属性的宝可梦，使用二进制数据1或0,1表示是这种属性，0表示不是这种属性，初始状态全部为0：
+
+    type_list = pd.Series(color_dict.keys())
+    for i in type_list:
+        df[i] = 0
+
+检查每一个宝可梦的主属性和副属性，将相应属性位置的二进制数设为1：
+
+    for i in range(0,len(df)):
+        type1_to_add = df.loc[i, "type1"]
+        df.loc[i, type1_to_add] = 1
+        type2_to_add = df.loc[i, "type2"]
+        if type2_to_add is not np.nan:
+            df.loc[i, type2_to_add] = 1
+
+对于我们本次的主要任务而言，主属性和副属性的地位同等重要。
+
+    
+    g = sns.scatterplot(x="weight_kg",y="hp",data=df,hue="type1",legend="full",palette=color_dict)
+    g.set_title("Pokemon by Weight and Base HP")
+    plt.show()
+
+![散点图](https://github.com/WangXueFei11/homework/assets/144666483/54ef3a7a-6fd0-447e-8d25-47c4c9e01b68)
+
+1. 散点图基本上显示了宝可梦的重量跟基础HP之间的正相关关系；
+2. 可以看出，大部分宝可梦的重量都在100KG以下；
+3. 100KG以下宝可梦的基础生命值的极差很大。
