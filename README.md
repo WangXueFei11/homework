@@ -95,3 +95,13 @@
 1. 散点图基本上显示了宝可梦的重量跟基础HP之间的正相关关系；
 2. 可以看出，大部分宝可梦的重量都在100KG以下；
 3. 100KG以下宝可梦的基础生命值的极差很大。
+
+下面计算相关系数：
+
+    a = round(df["weight_kg"].corr(df["hp"]),3)
+    print("The correlation coefficient between weight and base HP for all pokemon is "+ str(a))
+
+![5](https://github.com/WangXueFei11/homework/assets/144666483/9ebb34e4-772f-4ce1-b442-16810f0e59d6)
+
+可知相关系数为0.425。
+
