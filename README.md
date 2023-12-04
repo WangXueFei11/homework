@@ -58,3 +58,11 @@
     df[df["name"].isin(missing_data["name"])]
 
 ![3](https://github.com/WangXueFei11/homework/assets/144666483/d24cee0f-9895-4bd3-a2e7-95787df600b1)
+
+再次检查，确保数据得到正确的处理：
+
+    df.info()
+
+![4](https://github.com/WangXueFei11/homework/assets/144666483/f3d8097c-bbd5-406a-8fc0-3204bb3447e3)
+
+可以看到，weight_kg有801，跟宝可梦数量相同。
