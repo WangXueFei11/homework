@@ -302,6 +302,7 @@
 4. 通过计算与其马氏距离相关的p值来识别多元变量异常值。
 
 这是一个计算给定输入和数据集的马氏距离的函数：
+
     def maha(x=None, data=None, cov=None):
         x_minus_mu = x - data.mean()
         cova = np.cov(data.values.T)
