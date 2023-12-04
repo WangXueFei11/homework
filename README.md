@@ -189,4 +189,37 @@
 
     g = sns.lmplot(x="corr_coef",y="type_count",data=df_type, legend=False, height=10, aspect=2, scatter_kws={"s":10*df_type["type_count"], "color":list(color_dict.values())}, line_kws= 
     {"linewidth":8,"color":"purple"})
-    g.fig.suptitle("Correlation Coefficients vs. Number of Pokemon of that Type", fontsize=40, y=1.05)
+    g.fig.suptitle("Correlation Coefficients vs. Number of Pokemon of that Type", fontsize=20, y=0.8)
+    plt.show()
+
+![宝可梦数量与相关系数的关系](https://github.com/WangXueFei11/homework/assets/144666483/df1613d9-b141-4665-bba1-162e8beb65ef)
+
+点的大小跟这种类型的宝可梦的数量相对应，这张图的下降趋势表明，随着宝可梦的主属性变得越来越不常见，重量和基础HP之间的相关性变得越来越强。
+
+    g = sns.lmplot(x="corr_coef",y="weight_mean",data=df_type, legend=False, height=10, aspect=2, scatter_kws={"s":10*df_type["type_count"], "color":list(color_dict.values())}, line_kws= 
+    {"linewidth":8,"color":"purple"})
+    g.fig.suptitle("Correlation Coefficients vs. Average Weight of Pokemon of that Type", fontsize=20, y=0.8)
+    plt.show()
+
+![宝可梦平均重量与相关系数的关系](https://github.com/WangXueFei11/homework/assets/144666483/c6b6a439-4636-49aa-a7f7-5ce6ead5c1ac)
+
+该图的轻微上升趋势表明，随着特定属性宝可梦的平均重量上升，重量和基础HP之间的相关性变得越来越强。
+
+    fig, ((ax0, ax1, ax2, ax3, ax4, ax5),(ax6, ax7, ax8, ax9, ax10, ax11), (ax12, ax13, ax14, ax15, ax16, ax17)) = plt.subplots(3, 6)
+    g = ((ax0, ax1, ax2, ax3, ax4, ax5),(ax6, ax7, ax8, ax9, ax10, ax11), (ax12, ax13, ax14, ax15, ax16, ax17))
+    for i in range(0,len(type_list)):
+        sns.histplot(data=filtered_data[i], x="hp", ax=g[floor(i/6)][i % 6], color= list(color_dict.values())[i], binrange=[0,255], bins=13).set(title=list(color_dict.keys())[i])
+    fig.tight_layout()
+    fig.suptitle("Distribution of Base HP by Type", fontsize=50, y = 1.1)
+
+![各个系HP的分布](https://github.com/WangXueFei11/homework/assets/144666483/775a28f0-73fb-4301-82c4-8458de7eec81)
+
+1. 这些直方图显示了特定范围内宝可梦的基础HP；
+2. 与重量的分布相比，基础HP的变化范围较小；
+3. 可能与游戏设定最大的基础HP为255有关；
+4. 而重量主要是一种描述性特征，对宝可梦战斗的影响微乎其微，所以重量基本上是没有上限的。
+
+    for i in range(0, len(type_list)):
+        df_type.loc[type_list[i], "hp_mean"] = (filtered_data[i])["hp"].mean()
+        df_type.loc[type_list[i], "hp_stdev"] = (filtered_data[i])["hp"].std()
+    print(round(df_type[["hp_mean", "hp_stdev"]].sort_values(by="hp_mean", ascending=False),2))
