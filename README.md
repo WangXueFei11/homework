@@ -10,7 +10,7 @@
     df = fulldata[["name","type1","type2","weight_kg","hp","generation","is_legendary"]].copy()
     df.info()
 
-![1](https://github.com/WangXueFei11/homework/pitcure/1.jpg)
+![1](https://github.com/WangXueFei11/homework/final_project/pitcure/1.jpg)
 
 1. 从中我们可以看出，有20个宝可梦的重量数据丢失了。
 2. 事实证明，大部分数据丢失是因为宝可梦有不同的形态。
