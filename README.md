@@ -1,9 +1,10 @@
 # 口袋妖怪重量和基础HP关系分析
 ### 1.介绍
+数据来自http://serebii.net/
 1. 这是一份探索性的数据分析，分析了宝可梦的体重和基础HP之间的关系。
-2. 最初的假设是：宝可梦的重量越大，则基础HP越高。
+2. 最初的假设是：宝可梦的重量越大，则基础HP越高，这是符合我们的正常认知的。
 3. 同时，我认为宝可梦的属性（如：火，草，龙，幽灵）会对重量和基础HP之间的关系产生影响。
-4. 宝可梦共有18种种族。
+4. 宝可梦共有18种属性。
 5. 每一个宝可梦都有一个主要的属性，有一部分宝可梦还有一个副属性，主属性和副属性都是18种之一。
 ### 2.数据清洗
     fulldata = pd.read_csv("../Python/pokemon.csv")
@@ -219,7 +220,166 @@
 3. 可能与游戏设定最大的基础HP为255有关；
 4. 而重量主要是一种描述性特征，对宝可梦战斗的影响微乎其微，所以重量基本上是没有上限的。
 
+下面计算每种属性宝可梦的基础HP的平均值和标准差：
+
     for i in range(0, len(type_list)):
         df_type.loc[type_list[i], "hp_mean"] = (filtered_data[i])["hp"].mean()
         df_type.loc[type_list[i], "hp_stdev"] = (filtered_data[i])["hp"].std()
     print(round(df_type[["hp_mean", "hp_stdev"]].sort_values(by="hp_mean", ascending=False),2))
+
+![10](https://github.com/WangXueFei11/homework/assets/144666483/93f38b94-eaf5-4c99-82b0-99f8cb1ab3da)
+![9](https://github.com/WangXueFei11/homework/assets/144666483/53721bdb-bff9-496e-bd33-383b42ec4094)
+
+结合每种属性宝可梦的平均重量的平均值可以看出：
+1. 龙系，冰系和地面系的宝可梦的平均基础HP是最高的；
+2. 钢系和岩石系的宝可梦有很高的平均重量，但平均HP位于中等水平；
+3. 妖精系宝可梦的平均重量最低，但平均HP高于钢系。
+4. 虫系和毒系宝可梦的平均重量和平均HP都较低。
+
+# 4.识别和去除异常值
+
+下面找出重量最大的30个宝可梦，并给出每一个属性拥有几个：
+
+    uni_outliers_by_type = pd.DataFrame(columns=["outlier_count"])
+    for i in range(0, len(type_list)):
+        value_to_add = ((df.sort_values(by="weight_kg", ascending=False).head(30))[type_list[i]]).sum()
+        uni_outliers_by_type.loc[type_list[i],"outlier_count"] = value_to_add   
+    
+    print(uni_outliers_by_type.sort_values(by="outlier_count", ascending=False))
+
+![11](https://github.com/WangXueFei11/homework/assets/144666483/3c573576-c10b-4c07-92cf-ecb7c7cc8102)
+
+1. 地面系，龙系和钢系的宝可梦构成了30个最重的宝可梦的很大一部分；
+2. 仅通过权重去除异常值将导致这些属性的宝可梦的代表性不足；
+3. 因此考虑移除多元异常值，即与其他同属性的宝可梦相比，其重量与基础HP的比率异常的宝可梦。
+4. 通过计算与其马氏距离相关的p值来识别多元变量异常值。
+
+这是一个计算给定输入和数据集的马氏距离的函数：
+    def maha(x=None, data=None, cov=None):
+        x_minus_mu = x - data.mean()
+        cova = np.cov(data.values.T)
+        inv_covmat = sp.linalg.inv(cova)
+        left = np.dot(x_minus_mu, inv_covmat)
+        mahal = np.dot(left, x_minus_mu.T)
+        return mahal.diagonal()
+        
+这个循环使用数据帧列表，其中包含按属性过滤的每个宝可梦，并计算马氏距离和相关的p值：（p值的公式基于使用1个自由度的卡方分布(因为变量的数量为2)。）
+
+    for i in range(0, len(type_list)):
+        df_x = filtered_data[i][["weight_kg", "hp"]]
+        df_x.loc[df_x.index,"mahala"] = maha(x=df_x, data=df_x)
+        filtered_data[i] = pd.merge(filtered_data[i], df_x["mahala"], left_index=True, right_index=True)
+        filtered_data[i]["p_value"] = 1 - chi2.cdf(filtered_data[i]["mahala"], 1)
+
+找到所有具有异常低的p值(小于0.001)的宝可梦，并将它们添加到异常值列表中：（P < 0.001是确定数据点是否为离群值的标准。）
+    bivar_outliers = pd.DataFrame(columns= list(filtered_data[0].columns))
+    for i in range(0, len(type_list)):
+        out_to_add = filtered_data[i][filtered_data[i]["p_value"] < .001]
+        bivar_outliers = pd.concat([bivar_outliers, out_to_add])
+
+    outlier_dupes = bivar_outliers[bivar_outliers.duplicated(subset=["name"],keep="first")]
+    bivar_outliers = bivar_outliers[bivar_outliers["type2"].isna()]
+    bivar_outliers = pd.concat([bivar_outliers, outlier_dupes])
+    print(bivar_outliers.sort_values(by="name"))
+
+1. 双属性宝可梦包含在两个特定属性的数据框架中，而不是其中一个。
+2. 因此，双属性宝可梦可能是其中一种属性宝可梦中的异常值，而不是另一种属性宝可梦中的异常值。
+3. 选择在两种属性的宝可梦中都具有p < 0.001时才将其作为异常值。
+4. 找到在离群值列表中列出两次的双属性宝可梦(因此，它们是两种属性的离群值)。
+5. 然后清除双属性宝可梦的异常值列表，并只重新添加那些双属性宝可梦的异常值。
+
+以下20个宝可梦的重量和基础HP与所有与其具有相同属性的宝可梦的重量和基础HP分布相比是异常的。
+
+![12](https://github.com/WangXueFei11/homework/assets/144666483/61ff18ab-e737-41b2-b83d-45259bf40048)
+
+创建一个新的数据框架，删除掉异常值：
+
+    df_no_out = df[~df["name"].isin(bivar_outliers["name"])]
+    sns.scatterplot(x="weight_kg",y="hp",data=df_no_out,color="#152558").set_title("Pokemon by Weight and Base HP, Outliers Highlighted in Red")
+    sns.scatterplot(x="weight_kg",y="hp",data=bivar_outliers,color="#F82517")
+    plt.show()
+
+![异常值](https://github.com/WangXueFei11/homework/assets/144666483/47c4fda6-ac59-462d-9629-46c949f126d4)
+
+大多数被视为异常值的宝可梦，它们的重量或基础HP也是重量或基础HP的单变量异常值。由于每种属性的重量和基础HP分布不同，有些宝可梦不被认为是异常值，尽管它们的重量或基础HP比其他异常值的宝可梦更极端。
+
+# 5.线性回归
+开发一个具有10倍交叉验证的线性回归模型，尝试根据宝可梦的重量和属性来预测其基础HP。
+
+1. 训练模型的输入是宝可梦的重量和属性(用与所有18种可能属性对应的二进制数据列识别属性)。
+2. 训练目标是宝可梦的基础HP。
+3. 将异常值去除以训练模型，但该模型的预测也将应用于包括异常值在内的数据集。
+4. 系数和截距分别存储在名为“cv_coefs”和“cv_intercepts”的变量中。
+
+    X = df_no_out[["weight_kg","normal","fire","water","grass","electric","ice","fighting","poison","ground","flying","psychic","bug","rock","ghost","dark","dragon","steel","fairy"]]
+    y = df_no_out["hp"]
+    kf = KFold(n_splits=10, shuffle=True, random_state=135)
+    cv_scores = cross_val_score(LinearRegression(), X=X, y=y, cv=kf, scoring="r2")
+    cv_results = cross_validate(LinearRegression(), X=X, y=y, cv=kf, return_estimator=True)
+    cv_coefs = []
+    cv_intercepts = []
+    for model in cv_results["estimator"]:
+        cv_coefs.append(model.coef_)
+        cv_intercepts.append(model.intercept_)
+
+使用线性回归模型的系数和截距来预测每个宝可梦的基础HP，每个预测都是通过交叉验证中使用的单独模型的10个预测的平均值来实现的：
+
+    for i in range(0,len(df)):
+        pred_hp_int, pred_hp_coef = 0, 0
+        for j in range(0, 10):
+            pred_hp_list = []
+            pred_hp_int = pred_hp_int + cv_intercepts[j]
+            pred_hp_coef = pred_hp_coef + cv_coefs[j][0]*df.loc[i,"weight_kg"]
+            for k in range(0, len(type_list)):
+                pred_hp_coef = pred_hp_coef + df.loc[i,type_list[k]]*cv_coefs[j][k+1]
+            pred_hp_list.append(pred_hp_coef + pred_hp_int)
+        df.loc[i,"predicted_hp"] = sum(pred_hp_list)/10
+
+    plt.scatter(df["predicted_hp"], df["hp"], color="blue")
+    plt.xlabel("predicted HP")
+    plt.ylabel("actual HP")
+    plt.plot([0,255],[0,255], color="red",linestyle="dashed")
+    plt.title("Predicted vs. Actual HP Values")
+    plt.show()
+
+预测结果：
+
+![预测](https://github.com/WangXueFei11/homework/assets/144666483/36b44f92-b3fc-4bbd-8e4a-e65798fd878f)
+
+1. 红色虚线表示y=x;
+2. HP预测偏向于平均值，大多数预测在60-80范围内;
+3. 这可能是由于重量相对较低的宝可梦有较大的HP值范围。
+
+预测误差：
+
+![预测误差](https://github.com/WangXueFei11/homework/assets/144666483/23dab869-7d1d-4f10-ae5c-c1d9b2346a72)
+
+    g = sns.histplot((df["hp"] - df["predicted_hp"]),bins=60, color="blue")
+    g.set_title("Residuals")
+    plt.show()
+
+大多数预测值与实际值相差不超过20 HP。
+
+下面展示预测误差与预测值之间的关系：
+
+    plt.style.use("seaborn-whitegrid")
+    plt.scatter(df["predicted_hp"], (df["hp"]-df["predicted_hp"]), color="blue")
+    plt.xlabel("predicted HP")
+    plt.ylabel("residuals")
+    plt.title("Predicted HP vs. Residuals")
+    plt.show()
+
+![误差与预测值之间的关系](https://github.com/WangXueFei11/homework/assets/144666483/625f3e19-ce02-49ae-a4f2-36c631289584)
+
+下面数据化误差：
+
+    print("Mean Absolute Error:", round(metrics.mean_absolute_error(df["hp"], df["predicted_hp"]),3))
+    print("Mean Squared Error:", round(metrics.mean_squared_error(df["hp"], df["predicted_hp"]),3))
+    print("Root Mean Squared Error:", round(np.sqrt(metrics.mean_squared_error(df["hp"], df["predicted_hp"])),3))
+    print("R2 Score:", round(metrics.r2_score(df["hp"], df["predicted_hp"]),3))
+
+![数据化误差](https://github.com/WangXueFei11/homework/assets/144666483/ff849c82-e1f6-4995-a2fb-fdeef7ed2f48)
+
+1. R2分数相对较低，这表明只有19.3%的基础HP可以用它的重量和属性来解释；
+2. 这就意味着还有其他因素，如宝可梦的其他信息，如身高或进化形态的等，可以帮助我们做出更准确的预测；
+3. 然而，正如相关系数和R2分数所显示的那样，宝可梦的体重与其基础HP之间通常存在正相关关系。
