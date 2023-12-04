@@ -56,3 +56,5 @@
     dfix(744, np.nan, 25)
 
     df[df["name"].isin(missing_data["name"])]
+
+![3](https://github.com/WangXueFei11/homework/assets/144666483/d24cee0f-9895-4bd3-a2e7-95787df600b1)
