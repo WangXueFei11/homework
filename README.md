@@ -103,5 +103,23 @@
 
 ![5](https://github.com/WangXueFei11/homework/assets/144666483/9ebb34e4-772f-4ce1-b442-16810f0e59d6)
 
-可知相关系数为0.425。
+可知相关系数为0.425，0.425说明相关性是比较弱的（正相关）。
 
+
+下面考察每种属性的宝可梦的重量和基础HP之间的相关性，有两种属性的宝可梦将会被包含在这两种属性的桶中。
+
+    df_type = pd.DataFrame(columns=["type","corr_coef"])
+    for i in range(0,len(type_list)):
+        value_to_add = df.groupby(type_list[i])[["weight_kg","hp"]].corr().loc[1,"hp"]["weight_kg"]
+        df_type.loc[len(df_type.index)] = [type_list[i],value_to_add]
+    
+    df_type.set_index("type", inplace=True)
+    round(df_type.sort_values(by="corr_coef", ascending=False),3)
+    print(df_type)
+
+![6](https://github.com/WangXueFei11/homework/assets/144666483/5d0e7366-8813-47c8-a00e-032ab8b593ae)
+
+创建“df_type”，这是一个使用宝可梦属性作为索引的数据框架，并将使用这些属性的汇总数据填充。在数据框创建之后，对具有特定属性的宝可梦进行分组，并获得重量和基础HP之间的相关系数。
+
+1. 按照属性分类之后，可以看出在大部分属性的宝可梦中，重量跟基础HP有更强的正相关性；
+2. 其中只有毒系（poison,0.391）、飞行系（flying,0.378）、地面系（ground,0.359）和超能系（psychic,0.074）的相关系数小于所有属性的平均值（0.425）。
